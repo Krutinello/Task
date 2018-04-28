@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using People.Dal.Abstract;
+using People.Dal.Concrete;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace Task
@@ -25,6 +27,8 @@ namespace Task
                 c.SwaggerDoc("v1", new Info { Title = "MyTask", Description = "Swagger Core API" });
                 c.IncludeXmlComments($"{AppDomain.CurrentDomain.BaseDirectory}Task.xml");
             });
+
+            services.AddScoped<IPeopleRepository, PeopleRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
-using Task.Models.MyModels;
+using People.Dal.Abstract;
+using People.Dal.Entities;
 
 namespace Task.Controllers
 {
@@ -8,13 +10,12 @@ namespace Task.Controllers
     [Route("api/People")]
     public class PeopleController : Controller
     {
-        private static List<PersonModel> people = new List<PersonModel>
+        private readonly IPeopleRepository _peopleRepository;
+
+        public PeopleController(IPeopleRepository peopleRepository)
         {
-            new PersonModel { Id = 1, Name = "Andrew", SurName = "Kur", Age = 33 },
-            new PersonModel { Id = 2, Name = "Alex", SurName = "Test", Age = 23 },
-            new PersonModel { Id = 3, Name = "Anna", SurName = "LastName", Age = 20 },
-            new PersonModel { Id = 4, Name = "Olga", SurName = "Kos", Age = 34 }
-        };
+            _peopleRepository = peopleRepository ?? throw new ArgumentNullException(nameof(peopleRepository));
+        }
 
         // GET api/values
         /// <summary>
@@ -22,10 +23,7 @@ namespace Task.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        public IEnumerable<PersonModel> Get()
-        {
-            return people;
-        }
+        public IEnumerable<Person> Get() => _peopleRepository.Get();
 
         // GET api/values/5
         /// <summary>
@@ -36,11 +34,11 @@ namespace Task.Controllers
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
-            var person = people.Find(m => m.Id == id);
+            Person person = _peopleRepository.GetById(id);
             if (person != null)
                 return Ok(person);
 
-            return StatusCode(404);
+            return NotFound();
         }
 
         /// <summary>
@@ -49,41 +47,38 @@ namespace Task.Controllers
         /// <param name="person"></param>
         /// <returns></returns>
         [HttpPost]
-        public IActionResult Post([FromBody]PersonModel person)
+        public IActionResult Post([FromBody]Person person)
         {
             if (ModelState.IsValid)
             {
-                people.Add(person);
+                _peopleRepository.Add(person);
                 return Ok();
             }
 
-            return StatusCode(404);
+            return BadRequest();
         }
 
         /// <summary>
         /// Editing person by ID
         /// </summary>
-        /// <param name="id"></param>
         /// <param name="person"></param>
         /// <returns></returns>
         [HttpPut("{id}")]
-        public IActionResult Put(int id, [FromBody]PersonModel person)
+        public IActionResult Put([FromBody]Person person)
         {
             if (ModelState.IsValid)
             {
-                var _person = people.Find(m => m.Id == id);
-                if (_person != null)
+                Person p = _peopleRepository.GetById(person.Id);
+                if (p != null)
                 {
-                    _person.Name = person.Name;
-                    _person.SurName = person.SurName;
-                    _person.Age = person.Age;
+                    _peopleRepository.Update(p);
                     return Ok();
                 }
 
                 return StatusCode(404);
             }
 
-            return StatusCode(404);
+            return BadRequest();
         }
 
         /// <summary>
@@ -94,14 +89,14 @@ namespace Task.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            var person = people.Find(m => m.Id == id);
+            Person person = _peopleRepository.GetById(id);
             if (person != null)
             {
-                people.Remove(person);
+                _peopleRepository.Delete(id);
                 return Ok();
             }
 
-            return StatusCode(404);
+            return NotFound();
         }
     }
 }
