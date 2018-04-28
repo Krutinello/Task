@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Task.Models.MyModels;
 
@@ -12,21 +8,14 @@ namespace Task.Controllers
     [Route("api/People")]
     public class PeopleController : Controller
     {
-        private static List<PersonModel> people;
-        static PeopleController()
+        private static List<PersonModel> people = new List<PersonModel>
         {
+            new PersonModel { Id = 1, Name = "Andrew", SurName = "Kur", Age = 33 },
+            new PersonModel { Id = 2, Name = "Alex", SurName = "Test", Age = 23 },
+            new PersonModel { Id = 3, Name = "Anna", SurName = "LastName", Age = 20 },
+            new PersonModel { Id = 4, Name = "Olga", SurName = "Kos", Age = 34 }
+        };
 
-            people = new List<PersonModel>()
-            {
-                new PersonModel(){Id=1, Name="Andrew",SurName="Kur",Age=33},
-                new PersonModel(){Id=2, Name="Alex",SurName="Test",Age=23},
-                new PersonModel(){Id=3, Name="Anna",SurName="LastName",Age=20},
-                new PersonModel(){Id=4, Name="Olga",SurName="Kos",Age=34}
-            };
-        }
-        public PeopleController()
-        {         
-        }
         // GET api/values
         /// <summary>
         /// The list of all people
@@ -35,7 +24,6 @@ namespace Task.Controllers
         [HttpGet]
         public IEnumerable<PersonModel> Get()
         {
-            //return new string[] { "value1", "value2" };
             return people;
         }
 
@@ -50,15 +38,9 @@ namespace Task.Controllers
         {
             var person = people.Find(m => m.Id == id);
             if (person != null)
-            {
                 return Ok(person);
-            }
-            else
-            {
-                return StatusCode(404);
-            }
-            
-            //return NotFound("Ресурс в приложении не найден");
+
+            return StatusCode(404);
         }
 
         /// <summary>
@@ -74,10 +56,8 @@ namespace Task.Controllers
                 people.Add(person);
                 return Ok();
             }
-            else
-            {
-                return StatusCode(404);
-            }
+
+            return StatusCode(404);
         }
 
         /// <summary>
@@ -91,7 +71,7 @@ namespace Task.Controllers
         {
             if (ModelState.IsValid)
             {
-                var _person = people.Find(m=>m.Id==id);
+                var _person = people.Find(m => m.Id == id);
                 if (_person != null)
                 {
                     _person.Name = person.Name;
@@ -99,15 +79,11 @@ namespace Task.Controllers
                     _person.Age = person.Age;
                     return Ok();
                 }
-                else
-                {
-                    return StatusCode(404);
-                }
-            }
-            else
-            {
+
                 return StatusCode(404);
             }
+
+            return StatusCode(404);
         }
 
         /// <summary>
@@ -124,10 +100,8 @@ namespace Task.Controllers
                 people.Remove(person);
                 return Ok();
             }
-            else
-            {
-                return StatusCode(404);
-            }
+
+            return StatusCode(404);
         }
     }
 }

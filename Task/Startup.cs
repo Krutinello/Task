@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,32 +20,25 @@ namespace Task
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
-            services.AddSwaggerGen(c=>
+            services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new Info {Title="MyTask",Description="Swagger Core API" });
-                var xmlPath = System.AppDomain.CurrentDomain.BaseDirectory + @"Task.xml";
-                c.IncludeXmlComments(xmlPath);
-            }
-                
-            );
+                c.SwaggerDoc("v1", new Info { Title = "MyTask", Description = "Swagger Core API" });
+                c.IncludeXmlComments($"{AppDomain.CurrentDomain.BaseDirectory}Task.xml");
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())
-            {
                 app.UseDeveloperExceptionPage();
-            }
 
             app.UseMvc();
             app.UseSwagger();
-            app.UseSwaggerUI( c=>
+            app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json","Core API");
-            }
-                
-                );
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Core API");
+            });
         }
     }
 }
