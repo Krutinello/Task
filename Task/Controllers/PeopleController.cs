@@ -75,7 +75,7 @@ namespace Task.Controllers
                     return Ok();
                 }
 
-                return StatusCode(404);
+                return NotFound();
             }
 
             return BadRequest();

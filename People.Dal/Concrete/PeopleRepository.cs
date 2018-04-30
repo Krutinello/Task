@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using People.Dal.Abstract;
 using People.Dal.Entities;
 
